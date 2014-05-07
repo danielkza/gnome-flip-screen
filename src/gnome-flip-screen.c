@@ -404,7 +404,15 @@ int main(int argc, char **argv)
     gnome_rr_output_info_set_rotation(output_info, orientation_rot);
         
     error = NULL;
+    
+#if HAVE_GNOME_RR_CONFIG_APPLY
     gnome_rr_config_apply(config, screen, &error);
+#elif HAVE_GNOME_RR_CONFIG_APPLY_WITH_TIME
+    gnome_rr_config_apply_with_time(config, screen, (guint32)g_get_real_time(), &error);
+#else
+    #error No gnome-rr config. application function available!
+#endif 
+
     g_assert_no_error(error);
 
 
