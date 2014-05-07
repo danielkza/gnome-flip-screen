@@ -41,7 +41,7 @@ string_to_rotation(const gchar *str)
             return pair->rot;
     }
 
-    return -1;
+    return 0;
 }
 
 static const gchar*
@@ -89,7 +89,7 @@ rotation_flip(GnomeRRRotation rot)
 static gboolean list_outputs = FALSE;
 static gboolean list_output_infos = FALSE;
 static gchar *orientation = NULL;
-static GnomeRRRotation orientation_rot = -1;
+static GnomeRRRotation orientation_rot = 0;
 static gint output_id = -1;
 static gchar *output_name = NULL;
 
@@ -151,7 +151,7 @@ parse_args(int *argc, char ***argv)
         if(orientation != NULL) {
             orientation_rot = string_to_rotation(orientation);
 
-            if(orientation_rot == -1) {
+            if(orientation_rot == 0) {
                 g_warning("Invalid orientation.\n");
                 print_help(context);
                 exit(EXIT_FAILURE);
