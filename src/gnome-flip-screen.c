@@ -226,8 +226,8 @@ get_output_by_id(GnomeRRScreen *screen, gint id)
     return output;
 }
 
-static GnomeRRConfig
-*get_current_config(GnomeRRScreen *screen)
+static GnomeRRConfig*
+get_current_config(GnomeRRScreen *screen)
 {
     GError *error;
     GnomeRRConfig *config;
