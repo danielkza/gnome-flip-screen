@@ -128,10 +128,10 @@ parse_args(int *argc, char ***argv)
     GError *error = NULL;
     if(!g_option_context_parse(context, argc, argv, &error)) {
         if(error != NULL) {
-            g_warning("%s", error->message);
+            g_print("%s", error->message);
             g_error_free(error);
         } else {
-            g_warning("Unable to initialize GTK+");
+            g_print("Failed parsing command line");
         }
 
         exit(EXIT_FAILURE);
@@ -143,7 +143,7 @@ parse_args(int *argc, char ***argv)
         // pass
     } else {
         if(output_id >= 0 && output_name != NULL) {
-            g_warning("Only one of 'output-id' and 'output-name' must be specified.\n");
+            g_print("Only one of 'output-id' and 'output-name' must be specified.\n\n");
             print_help(context);
             exit(EXIT_FAILURE);
         }
@@ -152,7 +152,7 @@ parse_args(int *argc, char ***argv)
             orientation_rot = string_to_rotation(orientation);
 
             if(orientation_rot == 0) {
-                g_warning("Invalid orientation.\n");
+                g_print("Invalid orientation.\n\n");
                 print_help(context);
                 exit(EXIT_FAILURE);
             }
