@@ -162,10 +162,10 @@ parse_args(int *argc, char ***argv)
 }
 
 static GnomeRRScreen
-*get_default_screen()
+*get_default_screen(void)
 {
     GError *error  = NULL;
-    GnomeRRScreen * const screen = gnome_rr_screen_new(gdk_screen_get_default(), &error);
+    GnomeRRScreen * const screen = gnome_rr_screen_new(gdk_screen_get_default(void), &error);
 
     g_assert_no_error(error);
     g_assert(screen != NULL);
@@ -332,7 +332,7 @@ int main(int argc, char **argv)
 
     g_debug("Acquiring default screen.");
 
-    GnomeRRScreen * const screen = get_default_screen();
+    GnomeRRScreen * const screen = get_default_screen(void);
 
     if(list_outputs) {
         result = do_list_outputs(screen);
@@ -381,7 +381,7 @@ int main(int argc, char **argv)
 #if HAVE_GNOME_RR_CONFIG_APPLY
     gnome_rr_config_apply(config, screen, &error);
 #elif HAVE_GNOME_RR_CONFIG_APPLY_WITH_TIME
-    gnome_rr_config_apply_with_time(config, screen, (guint32)g_get_real_time(), &error);
+    gnome_rr_config_apply_with_time(config, screen, (guint32)g_get_real_time(void), &error);
 #else
     #error No gnome-rr config. application function available!
 #endif
