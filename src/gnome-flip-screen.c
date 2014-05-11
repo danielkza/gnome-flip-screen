@@ -111,7 +111,6 @@ print_help(GOptionContext *context)
     g_assert(help_content != NULL);
 
     g_print("%s", help_content);
-
     g_free(help_content);
 }
 
@@ -192,6 +191,7 @@ get_output_default(GnomeRRScreen *screen)
     }
 
     g_assert(result != NULL);
+
     return result;
 }
 
@@ -210,7 +210,6 @@ get_output_by_name(GnomeRRScreen *screen, const gchar *output_name)
 static GnomeRROutput*
 get_output_by_id(GnomeRRScreen *screen, gint id)
 {
-
     g_assert(screen != NULL);
     g_assert(id >= 0);
 
@@ -223,7 +222,6 @@ get_output_by_id(GnomeRRScreen *screen, gint id)
 static GnomeRRConfig*
 get_current_config(GnomeRRScreen *screen)
 {
-
     g_assert(screen != NULL);
 
     GError *error = NULL;
@@ -377,17 +375,16 @@ int main(int argc, char **argv)
     }
 
     gnome_rr_output_info_set_rotation(output_info, orientation_rot);
-        
+
     error = NULL;
-    
+
 #if HAVE_GNOME_RR_CONFIG_APPLY
     gnome_rr_config_apply(config, screen, &error);
 #elif HAVE_GNOME_RR_CONFIG_APPLY_WITH_TIME
     gnome_rr_config_apply_with_time(config, screen, (guint32)g_get_real_time(), &error);
 #else
     #error No gnome-rr config. application function available!
-#endif 
-
+#endif
     g_assert_no_error(error);
 
     // end g_debug("Applying display configuration.");
