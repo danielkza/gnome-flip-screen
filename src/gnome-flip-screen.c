@@ -21,7 +21,7 @@ string_to_rotation(const gchar *str)
         GnomeRRRotation rot;
     } str_rot_pair;
 
-    static const str_rot_pair str_rot_pairs[] = {
+    static const str_rot_pair const str_rot_pairs[] = {
         { "left",      GNOME_RR_ROTATION_90 },
         { "left-up",   GNOME_RR_ROTATION_90 },
         { "right",     GNOME_RR_ROTATION_270 },
@@ -105,9 +105,11 @@ static GOptionEntry entries[] = {
 static void
 print_help(GOptionContext *context)
 {
-    gchar *help_content;
+    g_assert(context != NULL);
 
-    help_content = g_option_context_get_help(context, TRUE, NULL);
+    gchar * const help_content  = g_option_context_get_help(context, TRUE, NULL);
+    g_assert(help_content != NULL);
+
     g_print("%s", help_content);
 
     g_free(help_content);
@@ -116,16 +118,14 @@ print_help(GOptionContext *context)
 static void
 parse_args(int *argc, char ***argv)
 {
-    GError *error;
-    GOptionContext *context;
-
-    context = g_option_context_new(NULL);
+    GOptionContext * const context  = g_option_context_new(NULL);
+    g_assert(context != NULL);
 
     g_option_context_add_main_entries(context, entries, NULL);
     g_option_context_add_group(context, gtk_get_option_group(FALSE));
     g_option_context_set_help_enabled(context, TRUE);
 
-    error = NULL;
+    GError *error = NULL;
     if(!g_option_context_parse(context, argc, argv, &error)) {
         if(error != NULL) {
             g_warning("%s", error->message);
@@ -165,26 +165,24 @@ parse_args(int *argc, char ***argv)
 static GnomeRRScreen
 *get_default_screen()
 {
-    GError *error;
-    GnomeRRScreen *screen;
+    GError *error  = NULL;
+    GnomeRRScreen * const screen = gnome_rr_screen_new(gdk_screen_get_default(), &error);
 
-    error = NULL;
-    screen = gnome_rr_screen_new(gdk_screen_get_default(), &error);
+    g_assert_no_error(error);
+    g_assert(screen != NULL);
 
-    g_assert_no_error(error); g_assert(screen != NULL);
     return screen;
 }
 
 static GnomeRROutput*
 get_output_default(GnomeRRScreen *screen)
 {
-    GnomeRROutput **outputs, *result;
+    g_assert(screen != NULL);
 
-    result = NULL;
-
-    outputs = gnome_rr_screen_list_outputs(screen);
+    GnomeRROutput ** const outputs = gnome_rr_screen_list_outputs(screen);
     g_assert(outputs != NULL);
 
+    GnomeRROutput *result = NULL;
     for(int i = 0; outputs[i] != NULL; ++i) {
         GnomeRROutput * const output = outputs[i];
         if(gnome_rr_output_get_is_primary(output)) {
@@ -200,59 +198,51 @@ get_output_default(GnomeRRScreen *screen)
 static GnomeRROutput*
 get_output_by_name(GnomeRRScreen *screen, const gchar *output_name)
 {
-    GError *error;
-    GnomeRROutput *output;
+    g_assert(screen != NULL);
+    g_assert(output_name != NULL);
 
-    error = NULL;
-    output = gnome_rr_screen_get_output_by_name(screen, output_name);
-    
-    g_assert_no_error(error); g_assert(screen != NULL);
+    GnomeRROutput * const output = gnome_rr_screen_get_output_by_name(screen, output_name);
+    g_assert(output != NULL);
+
     return output;
 }
 
 static GnomeRROutput*
 get_output_by_id(GnomeRRScreen *screen, gint id)
 {
-    GError *error;
-    GnomeRROutput *output;
 
     g_assert(screen != NULL);
     g_assert(id >= 0);
 
-    error = NULL;
-    output = gnome_rr_screen_get_output_by_id(screen, (guint32)id);
-    
-    g_assert_no_error(error); g_assert(output != NULL);
+    GnomeRROutput * const output = gnome_rr_screen_get_output_by_id(screen, (guint32)id);
+    g_assert(output != NULL);
+
     return output;
 }
 
 static GnomeRRConfig*
 get_current_config(GnomeRRScreen *screen)
 {
-    GError *error;
-    GnomeRRConfig *config;
 
     g_assert(screen != NULL);
 
-    error = NULL;
-    config = gnome_rr_config_new_current(screen, &error);
+    GError *error = NULL;
+    GnomeRRConfig * const config = gnome_rr_config_new_current(screen, &error);
+    g_assert(config != NULL);
 
-    g_assert_no_error(error); g_assert(config != NULL);
     return config;
 }
 
 static GnomeRROutputInfo*
 get_output_info_by_name(GnomeRRConfig *config, const gchar *name)
 {
-    GnomeRROutputInfo **infos, *result;
-
     g_assert(config != NULL);
     g_assert(name != NULL);
 
-    result = NULL;
-    infos = gnome_rr_config_get_outputs(config);
+    GnomeRROutputInfo **infos = gnome_rr_config_get_outputs(config);
     g_assert(infos != NULL);
 
+    GnomeRROutputInfo *result = NULL;
     for(int i = 0; infos[i] != NULL; ++i) {
         GnomeRROutputInfo * const info = infos[i];
         const gchar *info_name = gnome_rr_output_info_get_name(info);
@@ -263,6 +253,7 @@ get_output_info_by_name(GnomeRRConfig *config, const gchar *name)
         }
     }
 
+    g_assert(result != NULL);
     return result;
 }
 
@@ -271,13 +262,10 @@ output_rotation_flip(GnomeRROutput* output)
 {
     g_assert(output != NULL);
 
-    GnomeRRCrtc *crtc;
-    crtc = gnome_rr_output_get_crtc(output);
+    GnomeRRCrtc *crtc = gnome_rr_output_get_crtc(output);
     g_assert(crtc != NULL);
 
-    GnomeRRRotation current;
-    current = gnome_rr_crtc_get_current_rotation(crtc);
-
+    GnomeRRRotation current = gnome_rr_crtc_get_current_rotation(crtc);
     return rotation_flip(current);
 }
 
@@ -286,33 +274,26 @@ set_pixel_order(const gchar *order)
 {
     g_assert(order != NULL);
 
-    GSettings *settings;
-    GError *error;
+    GSettings * const settings = g_settings_new("org.gnome.settings-daemon.plugins.xsettings");
+    g_assert(settings != NULL);
 
-    error = NULL;
-    settings = g_settings_new("org.gnome.settings-daemon.plugins.xsettings");
-
-    g_assert_no_error(error); g_assert(settings != NULL);
-
-    gboolean result;
-    result = g_settings_set_string(settings, "rgba-order", order);
+    gboolean result = g_settings_set_string(settings, "rgba-order", order);
 
     g_clear_object(&settings);
+
     return result;
 }
 
 static int
 do_list_outputs(GnomeRRScreen *screen)
 {
-    GnomeRROutput **outputs;
-
-    outputs = gnome_rr_screen_list_outputs(screen);
+    GnomeRROutput ** const outputs = gnome_rr_screen_list_outputs(screen);
     g_assert(outputs != NULL);
 
     for(int i = 0; outputs[i] != NULL; ++i) {
         GnomeRROutput * const output = outputs[i];
         const int id = gnome_rr_output_get_id(output);
-        const gchar* const name = gnome_rr_output_get_name(output);
+        const gchar * const name = gnome_rr_output_get_name(output);
 
         g_print("%d: %s\n", id, name);
         //g_free(name);
@@ -324,15 +305,12 @@ do_list_outputs(GnomeRRScreen *screen)
 static int
 do_list_output_infos(GnomeRRScreen *screen)
 {
-    GError *error;
-    GnomeRRConfig *config;
-    GnomeRROutputInfo **infos;
+    GError *error = NULL;
+    GnomeRRConfig * const config = gnome_rr_config_new_current(screen, &error);
+    g_assert_no_error(error);
+    g_assert(config != NULL);
 
-    error = NULL;
-    config = gnome_rr_config_new_current(screen, &error);
-    g_assert_no_error(error); g_assert(config != NULL);
-
-    infos = gnome_rr_config_get_outputs(config);
+    GnomeRROutputInfo ** const infos = gnome_rr_config_get_outputs(config);
     g_assert(infos != NULL);
 
     for(int i = 0; infos[i] != NULL; ++i) {
@@ -346,7 +324,6 @@ do_list_output_infos(GnomeRRScreen *screen)
     return 0;
 }
 
-
 int main(int argc, char **argv)
 {
     int result;
@@ -357,9 +334,7 @@ int main(int argc, char **argv)
 
     g_debug("Acquiring default screen.");
 
-    GnomeRRScreen *screen;
-    screen = get_default_screen();
-
+    GnomeRRScreen * const screen = get_default_screen();
 
     if(list_outputs) {
         result = do_list_outputs(screen);
@@ -370,6 +345,7 @@ int main(int argc, char **argv)
         result = do_list_output_infos(screen);
         goto cleanup;
     }
+
 
     g_debug("Retrieving display output.");
 
@@ -384,12 +360,8 @@ int main(int argc, char **argv)
 
     g_debug("Retrieving output configuration.");
 
-    GnomeRRConfig *config;
-    config = get_current_config(screen);
-
-    GnomeRROutputInfo *output_info;
-    output_info = get_output_info_by_name(config, gnome_rr_output_get_name(output));
-    g_assert(output_info != NULL);
+    GnomeRRConfig * const config = get_current_config(screen);
+    GnomeRROutputInfo * const output_info = get_output_info_by_name(config, gnome_rr_output_get_name(output));
 
 
     g_debug("Applying display configuration.");
@@ -418,7 +390,7 @@ int main(int argc, char **argv)
 
     g_debug("Applying pixel order.");
 
-    const gchar *pixel_order = rotation_to_pixel_order(orientation_rot);
+    const gchar * const pixel_order = rotation_to_pixel_order(orientation_rot);
     g_debug("pixel order: %s\n", pixel_order);
 
     if(!set_pixel_order(pixel_order)) {
