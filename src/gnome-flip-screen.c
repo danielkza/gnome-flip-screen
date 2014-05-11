@@ -93,12 +93,12 @@ static GnomeRRRotation orientation_rot = 0;
 static gint output_id = -1;
 static gchar *output_name = NULL;
 
-static GOptionEntry entries[] = {
-    {"list-outputs", 'l', 0, G_OPTION_ARG_NONE,  &list_outputs, "List existing outputs, perform no action", NULL},
-    {"list-output-infos", 0, 0, G_OPTION_ARG_NONE,  &list_output_infos, "List existing outputs infos, perform no action", NULL},
-    {"orientation", 'o', 0, G_OPTION_ARG_STRING, &orientation, "Manual display orientation", NULL},
-    {"output-id",   'i', 0, G_OPTION_ARG_INT,    &output_id,   "Screen output id",           NULL},
-    {"output-name", 'n', 0, G_OPTION_ARG_STRING, &output_name, "Screen output name",         NULL},
+static const GOptionEntry const entries[] = {
+    {"list-outputs",     'l', 0, G_OPTION_ARG_NONE,   &list_outputs,      "List existing outputs, perform no action", NULL},
+    {"list-output-infos", 0,  0, G_OPTION_ARG_NONE,   &list_output_infos, "List existing outputs infos, perform no action", NULL},
+    {"orientation",      'o', 0, G_OPTION_ARG_STRING, &orientation,       "Manual display orientation", NULL},
+    {"output-id",        'i', 0, G_OPTION_ARG_INT,    &output_id,         "Screen output id", NULL},
+    {"output-name",      'n', 0, G_OPTION_ARG_STRING, &output_name,       "Screen output name", NULL},
     {NULL}
 };
 
