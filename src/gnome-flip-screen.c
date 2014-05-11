@@ -346,6 +346,7 @@ int main(int argc, char **argv)
         goto cleanup;
     }
 
+    // end g_debug("Acquiring default screen.");
 
     g_debug("Retrieving display output.");
 
@@ -357,12 +358,14 @@ int main(int argc, char **argv)
     else
         output = get_output_default(screen);
 
+    // end g_debug("Retrieving display output.");
 
     g_debug("Retrieving output configuration.");
 
     GnomeRRConfig * const config = get_current_config(screen);
     GnomeRROutputInfo * const output_info = get_output_info_by_name(config, gnome_rr_output_get_name(output));
 
+    // end g_debug("Retrieving output configuration.");
 
     g_debug("Applying display configuration.");
 
@@ -387,6 +390,7 @@ int main(int argc, char **argv)
 
     g_assert_no_error(error);
 
+    // end g_debug("Applying display configuration.");
 
     g_debug("Applying pixel order.");
 
