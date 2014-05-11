@@ -329,7 +329,7 @@ int main(int argc, char **argv)
     int result;
     GError *error;
 
-    gdk_init(&argc, &argv);
+    gtk_init(&argc, &argv);
     parse_args(&argc, &argv);
 
     g_debug("Acquiring default screen.");
